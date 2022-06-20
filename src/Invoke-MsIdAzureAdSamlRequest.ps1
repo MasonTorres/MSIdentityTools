@@ -1,12 +1,16 @@
 <#
 .SYNOPSIS
-   Invoke Saml Request on Azure AD.
+    Invoke Saml Request on Azure AD.
+   
 .EXAMPLE
-    PS C:\>$samlRequest = New-MsIdSamlRequest -Issuer 'urn:microsoft:adfs:claimsxray'
-    PS C:\>Invoke-MsIdAzureAdSamlRequest $samlRequest.OuterXml
+    PS > $samlRequest = New-MsIdSamlRequest -Issuer 'urn:microsoft:adfs:claimsxray'
+    PS > Invoke-MsIdAzureAdSamlRequest $samlRequest.OuterXml
+
     Create new Saml Request for Claims X-Ray and Invoke on Azure AD.
+
 .INPUTS
     System.String
+
 #>
 function Invoke-MsIdAzureAdSamlRequest {
     [CmdletBinding()]
@@ -14,16 +18,16 @@ function Invoke-MsIdAzureAdSamlRequest {
     param (
         # SAML Request
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
-        [object[]] $Tokens,
+        [object[]] $SamlRequest,
         # Azure AD Tenant Id
         [Parameter(Mandatory = $false)]
         [string] $TenantId = 'common'
     )
 
     process {
-        foreach ($Token in $Tokens) {
+        foreach ($_SamlRequest in $SamlRequest) {
             if ($Token -is [string]) {
-                $xmlSamlRequest = ConvertFrom-SamlSecurityToken $Tokens
+                $xmlSamlRequest = ConvertFrom-SamlMessage $_SamlRequest
             }
             else {
                 $xmlSamlRequest = $Token

@@ -3,8 +3,8 @@
         PassThru = $true
     }
     Filter       = @{
-        Tag        = ''
-        #ExcludeTag = 'IntegrationTest'
+        #Tag        = ''
+        ExcludeTag = 'IntegrationTest'
     }
     CodeCoverage = @{
         Enabled      = $true
@@ -13,11 +13,11 @@
         RecursePaths = $false
     }
     TestResult   = @{
-        Enabled      = $false
+        Enabled      = $true
         OutputFormat = 'NUnitXML'
         OutputPath   = '.\build\TestResults\TestResult.xml'
     }
     Output       = @{
-        Verbosity = 'Detailed'
+        #Verbosity = 'Detailed'
     }
 }

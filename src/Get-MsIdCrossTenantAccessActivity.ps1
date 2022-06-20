@@ -9,8 +9,8 @@
     
     Has a parameter, -AccessDirection, to further refine results, using the following values: 
 
-        * Outboud - lists sign-in events of external tenant IDs accessed by local users
-        * Inbound - list sign-in events of external tenant IDs of external users accessing local tenant
+      * Outboud - lists sign-in events of external tenant IDs accessed by local users
+      * Inbound - list sign-in events of external tenant IDs of external users accessing local tenant
 
     Has a parameter, -ExternalTenantId, to target a single external tenant ID.
 
@@ -22,7 +22,8 @@
 
     -Verbose will give insight into the cmdlets activities.
 
-    Requires AuditLog.Read.All scope, i.e. Connect-MgGraph -Scopes AuditLog.Read.All
+    Requires AuditLog.Read.All scope (to access logs) and CrossTenantInfo.ReadBasic.All scope 
+    (for -ResolveTenantId), i.e. Connect-MgGraph -Scopes AuditLog.Read.All
 
 
 .EXAMPLE
@@ -339,7 +340,7 @@ function Get-MsIdCrossTenantAccessActivity {
 
                     #Attempt to resolve tenant ID
 
-                    try { $ResolvedTenant = Resolve-MsIdTenant -TenantId $TenantId.Name -ErrorAction SilentlyContinue }
+                    try { $ResolvedTenant = Resolve-MSIDTenant -TenantId $TenantId.Name -ErrorAction SilentlyContinue }
                     catch { Write-Verbose -Message "$(Get-Date -f T) - Issue resolving external tenant - $($TenantId.Name)" }
 
                     if ($ResolvedTenant) {

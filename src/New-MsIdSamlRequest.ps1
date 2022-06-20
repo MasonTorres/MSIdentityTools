@@ -1,15 +1,22 @@
 <#
 .SYNOPSIS
    Create New Saml Request.
+   
 .EXAMPLE
-    PS C:\>New-MsIdSamlRequest -Issuer 'urn:microsoft:adfs:claimsxray'
+    PS > New-MsIdSamlRequest -Issuer 'urn:microsoft:adfs:claimsxray'
+
     Create New Saml Request for Claims X-Ray.
+
 .INPUTS
     System.String
+
+.OUTPUTS
+    SamlMessage : System.Xml.XmlDocument, System.String
+
 #>
 function New-MsIdSamlRequest {
     [CmdletBinding()]
-    [OutputType([xml], [string])]
+    #[OutputType([xml], [string])]
     param (
         # Azure AD uses this attribute to populate the InResponseTo attribute of the returned response.
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
@@ -75,7 +82,7 @@ function New-MsIdSamlRequest {
     }
 
     process {
-        $xmlSamlRequest = New-Object xml
+        $xmlSamlRequest = New-Object SamlMessage
         $xmlSamlRequest.Load($pathSamlRequest)
         $xmlSamlRequest.AuthnRequest.ID = 'id{0}' -f (New-Guid).ToString("N")
         $xmlSamlRequest.AuthnRequest.IssueInstant = (Get-Date).ToUniversalTime().ToString('o')
@@ -83,7 +90,7 @@ function New-MsIdSamlRequest {
         if ($AssertionConsumerServiceURL) { $xmlSamlRequest.AuthnRequest.SetAttribute('AssertionConsumerServiceURL', $AssertionConsumerServiceURL) }
         if ($PSBoundParameters.ContainsKey('IsPassive')) { $xmlSamlRequest.AuthnRequest.SetAttribute('IsPassive', $IsPassive.ToString().ToLowerInvariant()) }
         if ($PSBoundParameters.ContainsKey('ForceAuthn')) { $xmlSamlRequest.AuthnRequest.SetAttribute('ForceAuthn', $ForceAuthn.ToString().ToLowerInvariant()) }
-        if ($NameIDPolicyFormat) { $xmlSamlRequest.AuthnRequest.NameIDPolicy.SetAttribute('Format', $NameIDPolicyFormat) }
+        if ($NameIDPolicyFormat) { (Resolve-XmlElement $xmlSamlRequest.DocumentElement -Prefix samlp -LocalName NameIDPolicy -NamespaceURI $xmlSamlRequest.DocumentElement.NamespaceURI -CreateMissing).SetAttribute('Format', $NameIDPolicyFormat) }
         if ($RequestedAuthnContext) {
             $AuthnContextClassRefTemplate = $xmlSamlRequest.AuthnRequest.RequestedAuthnContext.ChildNodes[0]
             foreach ($AuthnContext in $RequestedAuthnContext) {

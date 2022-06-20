@@ -1,20 +1,30 @@
 <#
 .SYNOPSIS
     Get list of IP ranges for Azure
+
 .EXAMPLE
-    PS C:\>Get-MsIdAzureIpRange -AllServiceTagsAndRegions
+    PS > Get-MsIdAzureIpRange -AllServiceTagsAndRegions
+
     Get list of IP ranges for Azure Public cloud catagorized by Service Tag and Region.
+
 .EXAMPLE
-    PS C:\>Get-MsIdAzureIpRange -ServiceTag AzureActiveDirectory
+    PS > Get-MsIdAzureIpRange -ServiceTag AzureActiveDirectory
+
     Get list of IP ranges for Azure Active Directory in Azure Public Cloud.
+
 .EXAMPLE
-    PS C:\>Get-MsIdAzureIpRange -Region WestUS
+    PS > Get-MsIdAzureIpRange -Region WestUS
+
     Get list of IP ranges for West US region of Azure Public Cloud.
+
 .EXAMPLE
-    PS C:\>Get-MsIdAzureIpRange -Cloud China -Region ChinaEast -ServiceTag Storage
+    PS > Get-MsIdAzureIpRange -Cloud China -Region ChinaEast -ServiceTag Storage
+
     Get list of IP ranges for Storage in ChinaEast region of Azure China Cloud.
+
 .INPUTS
     System.String
+    
 #>
 function Get-MsIdAzureIpRange {
     [CmdletBinding(DefaultParameterSetName = 'ById')]
@@ -35,7 +45,7 @@ function Get-MsIdAzureIpRange {
                 [string] $ServiceTag = ''  # Default ServiceTag parameter value
                 if ($fakeBoundParameters.ContainsKey('ServiceTag')) { $ServiceTag = $fakeBoundParameters.ServiceTag }
 
-                [array] $AllServiceTagsAndRegions = Get-MsIdAzureIpRange -Cloud $Cloud -AllServiceTagsAndRegions -Verbose:$false
+                [array] $AllServiceTagsAndRegions = Get-MSIDAzureIpRange -Cloud $Cloud -AllServiceTagsAndRegions -Verbose:$false
                 #$AllServiceTagsAndRegions.values.properties.region | Select-Object -Unique | Where-Object { $_ }
 
                 $listRegions = New-Object System.Collections.Generic.List[string]
@@ -62,7 +72,7 @@ function Get-MsIdAzureIpRange {
                 [string] $Region = ''  # Default Region parameter value
                 if ($fakeBoundParameters.ContainsKey('Region')) { $Region = $fakeBoundParameters.Region }
 
-                [array] $AllServiceTagsAndRegions = Get-MsIdAzureIpRange -Cloud $Cloud -AllServiceTagsAndRegions -Verbose:$false
+                [array] $AllServiceTagsAndRegions = Get-MSIDAzureIpRange -Cloud $Cloud -AllServiceTagsAndRegions -Verbose:$false
                 #$AllServiceTagsAndRegions.values.properties.region | Select-Object -Unique | Where-Object { $_ }
 
                 $listServiceTags = New-Object System.Collections.Generic.List[string]

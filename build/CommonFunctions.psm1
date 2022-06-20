@@ -179,8 +179,10 @@ function Get-PathInfo {
             if ($Path) {
                 ## Look for existing path
                 try {
-                    $ResolvePath = Resolve-FullPath $Path -BaseDirectory $DefaultDirectory -ErrorAction SilentlyContinue
-                    $OutputPath = Get-Item $ResolvePath -ErrorAction SilentlyContinue
+                    $ResolvePath = Resolve-FullPath $Path -BaseDirectory $DefaultDirectory -ErrorAction Ignore
+                    if ($ResolvePath) {
+                        $OutputPath = Get-Item $ResolvePath -ErrorAction Ignore
+                    }
                 }
                 catch { }
                 if ($OutputPath -is [array]) {
@@ -206,8 +208,10 @@ function Get-PathInfo {
                     [string] $AbsolutePath = (Join-Path $OutputPath.FullName $DefaultFileName)
                     $OutputPath = $null
                     try {
-                        $ResolvePath = Resolve-FullPath $AbsolutePath -BaseDirectory $DefaultDirectory -ErrorAction SilentlyContinue
-                        $OutputPath = Get-Item $ResolvePath -ErrorAction SilentlyContinue
+                        $ResolvePath = Resolve-FullPath $AbsolutePath -BaseDirectory $DefaultDirectory -ErrorAction Ignore
+                        if ($ResolvePath) {
+                            $OutputPath = Get-Item $ResolvePath -ErrorAction Ignore
+                        }
                     }
                     catch { }
                     if (!$OutputPath -and $AbsolutePath -notmatch '[*?]') {
@@ -216,8 +220,8 @@ function Get-PathInfo {
                 }
 
                 if (!$OutputPath -or !$OutputPath.Exists) {
-                    if ($OutputPath) { Write-Error -Exception (New-Object System.Management.Automation.ItemNotFoundException -ArgumentList ('Cannot find path ''{0}'' because it does not exist.' -f $OutputPath.FullName)) -TargetObject $OutputPath.FullName -ErrorId 'PathNotFound' -Category ObjectNotFound }
-                    else { Write-Error -Exception (New-Object System.Management.Automation.ItemNotFoundException -ArgumentList ('Cannot find path ''{0}'' because it does not exist.' -f $AbsolutePath)) -TargetObject $AbsolutePath -ErrorId 'PathNotFound' -Category ObjectNotFound }
+                    if ($OutputPath) { Write-Error -Exception (New-Object System.Management.Automation.ItemNotFoundException -ArgumentList ('Cannot find path ''{0}'' because it does not exist.' -f $OutputPath.FullName)) -TargetObject $OutputPath.FullName -ErrorId 'PathNotFound' -Category ObjectNotFound -ErrorAction $ErrorActionPreference }
+                    else { Write-Error -Exception (New-Object System.Management.Automation.ItemNotFoundException -ArgumentList ('Cannot find path ''{0}'' because it does not exist.' -f $AbsolutePath)) -TargetObject $AbsolutePath -ErrorId 'PathNotFound' -Category ObjectNotFound -ErrorAction $ErrorActionPreference }
                 }
             }
 
